@@ -1,6 +1,7 @@
 package com.footbooking.user;
 
 import com.footbooking.common.exception.ResourceNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository , PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User getById(Long id){
@@ -29,5 +32,22 @@ public class UserService {
 
    public boolean existsByPhone(String phone){
         return userRepository.existsByPhone(phone);
+   }
+
+
+   @Transactional
+   public User createUser(String email , String phone , String fullname , String rawPassword){
+        if(userRepository.existsByEmail(email)){
+            throw new IllegalStateException("Email already registered" + email);
+        }
+
+        User user = new User();
+        user.setEmail(email);
+        user.setFullname(fullname);
+        user.setPasswordHash(passwordEncoder.encode(rawPassword));
+        user.setRole(Role.USER);
+        user.setPhone(phone);
+        user.setVerified(false);
+        return userRepository.save(user);
    }
 }

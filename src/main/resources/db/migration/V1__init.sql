@@ -9,7 +9,7 @@ CREATE TABLE users (
                        otp_hash                        VARCHAR(255),
                        otp_expires_at                  TIMESTAMP,
                        otp_attempts                    SMALLINT NOT NULL DEFAULT 0,
-                       reset_password_otp_hash         TIMESTAMP,
+                       reset_password_otp_hash         VARCHAR(255),
                        reset_password_otp_expires_at   TIMESTAMP,
                        reset_password_otp_attempts     SMALLINT NOT NULL DEFAULT 0,
                        created_at                      TIMESTAMP NOT NULL DEFAULT now(),
